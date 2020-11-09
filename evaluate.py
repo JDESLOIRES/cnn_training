@@ -31,17 +31,16 @@ y_test = tf.keras.utils.to_categorical(y_test, 10)
 
 cnn = tf.keras.models.load_model('/home/s999379/model_weights_CNN/my_best_cnn2',compile=True)
 
-cnn.trainable_variables
+cnn.call(x_test,training = False)
 
+#Why it does not work,?
 
-cnn.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=10e-4),
-            loss=tf.keras.losses.CategoricalCrossentropy(from_logits=False))
-#batch_test, batch_y_test = training.get_batch(1, x_test), training.get_batch(1, y_test)
-tf.config.experimental_run_functions_eagerly(True)
-input = tf.keras.Input(shape=(28,28,1))
-cnn.call(input,training = False)
+metrics = training.evaluate_model(x_test, y_test, 64)
+y_pred, test_fm, *_ = metrics.apply_predictions(cnn)
 
+##Or this?
 maping = visualization.map_layer(cnn,input_shape = (28,28,1))
+
 
 conv_2 = maping.get_extractor('conv_2')
 maping.plot_layer(conv_2,batch_x)
@@ -50,8 +49,7 @@ flatten = maping.get_extractor('flatten_8')
 maping.embedding_tsne(flatten,batch_test,batch_y_test)
 
 
-metrics = evaluate.evaluate_model(batch_test, batch_y_test, 64)
-y_pred, test_fm, *_ = metrics.apply_predictions(cnn)
+
 
 
 #autre fichier : main qui charge données test + modèle + calcul prédiction

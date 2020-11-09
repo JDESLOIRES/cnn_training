@@ -92,7 +92,7 @@ conv_2 = maping.get_extractor('conv_2')
 maping.plot_layer(conv_2,batch_x)
 layers = np.array([layer.name for layer in cnn.layers])
 
-flatten = maping.get_extractor('flatten_5')
+flatten = maping.get_extractor('flatten')
 maping.embedding_tsne(flatten,batch_x,batch_y)
 
 

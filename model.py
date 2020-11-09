@@ -112,10 +112,9 @@ class MyCNN(tf.keras.Model):
         outputs_model = self.model_output(outputs)
 
         return outputs_model#, flatten
+
 #autre : get_embedding
-
 #pca sur flatten (tsne)
-
 
 
 

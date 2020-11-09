@@ -7,7 +7,7 @@ import tensorflow as tf
 import visualization
 import load_data
 import training
-
+import model
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 
@@ -28,10 +28,11 @@ y_test = tf.keras.utils.to_categorical(y_test, 10)
 
 
 ##################################################################################
+load_model = model.MyCNN()
+load_model.load_weights('./model_weights_CNN/my_best_cnn_.h5')
 
-cnn = tf.keras.models.load_model('/home/s999379/model_weights_CNN/my_best_cnn2',compile=True)
-
-cnn.call(x_test,training = False)
+#cnn = tf.keras.models.load_model('/home/s999379/model_weights_CNN/my_best_cnn2',compile=True)
+#cnn.call(x_test,training = False)
 
 #Why it does not work,?
 
@@ -45,7 +46,7 @@ maping = visualization.map_layer(cnn,input_shape = (28,28,1))
 conv_2 = maping.get_extractor('conv_2')
 maping.plot_layer(conv_2,batch_x)
 
-flatten = maping.get_extractor('flatten_8')
+flatten = maping.get_extractor('flatten')
 maping.embedding_tsne(flatten,batch_test,batch_y_test)
 
 

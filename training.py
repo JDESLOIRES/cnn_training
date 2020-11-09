@@ -138,7 +138,7 @@ class train_classifier:
                     str(round(val_metric,3))))
 
             if val_metric >= np.max(val_metric_list):
-               model.save(filepath + filename,overwrite = True)
+               model.save_weights(filepath + filename + '.h5',overwrite = True)
 
 
 

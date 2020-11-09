@@ -77,8 +77,8 @@ training.fit_model(cnn,
                    optimizer=tf.keras.optimizers.Adam(learning_rate=10e-4),
                    loss=tf.keras.losses.CategoricalCrossentropy(from_logits=False),
                    nb_epoch=1,
-                   filepath='/home/s999379/model_weights_CNN/',
-                   filename='my_best_cnn2'
+                   filepath='./model_weights_CNN/',
+                   filename='my_best_cnn_'
                    )
 
 #model.get_weights and save only

@@ -13,7 +13,7 @@ import random
 import numpy as np
 
 config = ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.25
+config.gpu_options.per_process_gpu_memory_fraction = 1
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
 
@@ -42,7 +42,7 @@ def get_batch(i, array, nb_batch=64):
 #Aggregate 10 random batch to get accuracy
 batch_x_test = []
 batch_y_test = []
-nb_aggregated_random_batch = 5
+nb_aggregated_random_batch = 2
 my_randoms = random.sample(range(0,x_test.shape[0]//64), nb_aggregated_random_batch)
 for i in my_randoms:
     print(i)
@@ -62,11 +62,12 @@ metrics = training.evaluate_model(batch_x_test, batch_y_test)
 y_pred, test_fm, *_ = metrics.apply_predictions(best_model)
 print('Accuracy on those batch test :' + str(test_fm))
 
+#TNSE
+visualization.embedding_tsne(flatten,batch_y_test)
+
+
 
 #Mapping predictions
 maping = visualization.map_layer(best_model, input_shape=(28, 28, 1))
 conv_2 = maping.get_extractor('conv_2')
 maping.plot_layer(conv_2, batch_x_test)
-#TNSE
-visualization.embedding_tsne(flatten,batch_y_test)
-

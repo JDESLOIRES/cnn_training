@@ -111,12 +111,7 @@ class MyCNN(tf.keras.Model):
         outputs = self.dense_2(drp_3)
         outputs_model = self.model_output(outputs)
 
-        return outputs_model#, flatten
-
-#autre : get_embedding
-#pca sur flatten (tsne)
-
-
+        return outputs_model, flatten
 
 
 class LeNet(tf.keras.Model):
@@ -134,18 +129,22 @@ class LeNet(tf.keras.Model):
                                              input_shape=input_shape,
                                              padding="same",
                                              name='conv_1')
+
         self.pool_1 = tf.keras.layers.AveragePooling2D(pool_size=(2, 2),
                                                        strides=(2, 2),
-                                                       padding='valid')
+                                                       padding='valid',
+                                                       name = 'pool_1')
 
         self.conv_2 = tf.keras.layers.Conv2D(16, kernel_size=(5, 5),
                                              strides=(1, 1),
                                              activation=hidden_activation,
                                              padding='valid',
                                              name='conv_2')
+
         self.pool_2 = tf.keras.layers.AveragePooling2D(pool_size=(2, 2),
                                                        strides=(2, 2),
-                                                       padding='valid')
+                                                       padding='valid',
+                                                       name='pool_2')
 
         self.flatten = tf.keras.layers.Flatten()
         self.dense_1 = tf.keras.layers.Dense(120, activation=hidden_activation)
@@ -165,4 +164,4 @@ class LeNet(tf.keras.Model):
         dense_1 = self.dense_1(flatten)
         dense_2 = self.dense_2(dense_1)
 
-        return self.model_output(dense_2)  # Return results of Output Layer
+        return self.model_output(dense_2), flatten

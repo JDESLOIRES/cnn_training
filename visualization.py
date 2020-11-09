@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 
+
 class map_layer:
     def __init__(self,model,input_shape = (28,28,1)):
         self.model = model
@@ -26,7 +27,7 @@ class map_layer:
 
     def plot_layer(self,
                    successive_feature_maps,
-                   X,
+                   X,index_image=0,
                    height=8,width=8):
 
         successive_feature_maps = successive_feature_maps.predict(X)
@@ -39,27 +40,28 @@ class map_layer:
                 ax.set_xticks([])
                 ax.set_yticks([])
                 # plot filter channel in grayscale
-                plt.imshow(successive_feature_maps[-1][0, :, :, ix - 1], cmap='gray')
+                plt.imshow(successive_feature_maps[-1][index_image, :, :, ix - 1], cmap='gray')
                 ix += 1
 
         # show the figure
         plt.show()
 
-    def embedding_tsne(self,successive_feature_maps,X,y):
-        sns.set(rc={'figure.figsize': (11.7, 8.27)})
-        palette = sns.color_palette("bright", 10)
+import copy
+def embedding_tsne(flatten,y):
+    #model = tf.keras.models.clone_model(cnn)
+    #_, flatten = model.call(X, training=False)
+    sns.set(rc={'figure.figsize': (11.7, 8.27)})
+    palette = sns.color_palette("bright", 10)
 
-        tsne = TSNE(n_components=2)
+    tsne = TSNE(n_components=2,n_iter = 3000,learning_rate = 100)
 
-        flatten_value = successive_feature_maps.predict(X)
-        predictions = flatten_value[-1]
-        x_std = StandardScaler().fit_transform(predictions)
+    x_std = StandardScaler().fit_transform(flatten)
 
-        train_test_2D = tsne.fit_transform(x_std)
-        y = np.argmax(y, axis=1).astype(float)
+    train_test_2D = tsne.fit_transform(x_std)
+    y = np.argmax(y, axis=1).astype(float)
 
-        sns.scatterplot(train_test_2D[:, 0], train_test_2D[:, 1],
-                        hue=y,
-                        legend='full', palette=palette)
+    sns.scatterplot(train_test_2D[:, 0], train_test_2D[:, 1],
+                    hue=y,
+                    legend='full', palette=palette)
 
-        plt.show()
+    plt.show()

@@ -9,14 +9,18 @@ import training
 import model
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
+import random
+import numpy as np
 
 config = ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.15
+config.gpu_options.per_process_gpu_memory_fraction = 0.25
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
 
 #################################################################################
-
+#Path best model
+filepath='/home/s999379/model_weights_CNN_3/'
+filename='my_best_cnn_.h5'
 
 class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
                'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
@@ -35,36 +39,34 @@ def get_batch(i, array, nb_batch=64):
     batch_x = array[start_id:end_id]
     return batch_x
 
-
-batch_x_test, batch_y_test = [], []
-for i in range(10):
+#Aggregate 10 random batch to get accuracy
+batch_x_test = []
+batch_y_test = []
+nb_aggregated_random_batch = 5
+my_randoms = random.sample(range(0,x_test.shape[0]//64), nb_aggregated_random_batch)
+for i in my_randoms:
+    print(i)
     batch_x_test.append(get_batch(i, x_test))
     batch_y_test.append(get_batch(i, y_test))
 
 batch_x_test, batch_y_test = np.vstack(batch_x_test), np.vstack(batch_y_test)
 
-# Why it does not work,?
-load_model = model.MyCNN()
-#load_model.load_weights('./model_weights_CNN/my_best_cnn_.h5')
+#Evaluate
+best_model = model.MyCNN()
+_, flatten = best_model.call(batch_x_test,training = False)
 
-# load_model = tf.keras.models.load_model('/home/s999379/model_weights_CNN/my_best_cnn2',compile=True)
-# load_model.call(x_test,training = False)
-
+best_model.load_weights(filepath + filename)
 
 ##Evaluate
 metrics = training.evaluate_model(batch_x_test, batch_y_test)
-y_pred, test_fm, *_ = metrics.apply_predictions(cnn)
+y_pred, test_fm, *_ = metrics.apply_predictions(best_model)
+print('Accuracy on those batch test :' + str(test_fm))
 
 
-
-##Or this?
-maping = visualization.map_layer(cnn, input_shape=(28, 28, 1))
-
+#Mapping predictions
+maping = visualization.map_layer(best_model, input_shape=(28, 28, 1))
 conv_2 = maping.get_extractor('conv_2')
 maping.plot_layer(conv_2, batch_x_test)
+#TNSE
+visualization.embedding_tsne(flatten,batch_y_test)
 
-flatten = maping.get_extractor('flatten')
-maping.embedding_tsne(flatten, batch_x_test, batch_y_test)
-
-# autre fichier : main qui charge données test + modèle + calcul prédiction
-# sauve weights + autre fichier : initialise un modèle avec les weights saved

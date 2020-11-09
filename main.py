@@ -43,6 +43,8 @@ y_train = tf.keras.utils.to_categorical(y_train, 10)
 y_valid = tf.keras.utils.to_categorical(y_valid, 10)
 y_test = tf.keras.utils.to_categorical(y_test, 10)
 
+
+
 for i in range(9):
     print(i)
     # define subplot
@@ -64,36 +66,41 @@ training.fit_model(mlp,
                    optimizer=tf.keras.optimizers.Adam(learning_rate=10e-3),
                    loss=tf.keras.losses.CategoricalCrossentropy(from_logits=False),
                    nb_epoch=1,
-                   filepath='/home/s999379/model_weights_MLP/'
+                   filepath='/home/s999379/model_weights_MLP/',
+                   filename='my_best_mlp_.h5'
                    )
 
-best_model = tf.keras.models.load_model('/home/s999379/model_weights_MLP/')
 
 ##################################################################################
 
 cnn = model.MyCNN()
+filepath='/home/s999379/model_weights_CNN_3/'
+filename='my_best_cnn_.h5'
 
 training.fit_model(cnn,
                    optimizer=tf.keras.optimizers.Adam(learning_rate=10e-4),
                    loss=tf.keras.losses.CategoricalCrossentropy(from_logits=False),
                    nb_epoch=1,
-                   filepath='./model_weights_CNN/',
-                   filename='my_best_cnn_'
+                   filepath=filepath,
+                   filename=filename
                    )
 
-#model.get_weights and save only
-
 batch_x, batch_y = training.get_batch(1, x_train), training.get_batch(1, y_train)
-#batch_test, batch_y_test = training.get_batch(1, x_test), training.get_batch(1, y_test)
 
-maping = visualization.map_layer(cnn,input_shape = (28,28,1))
+#Take the best model
+best_model = model.MyCNN()
+_, flatten = best_model.call(batch_x,training = False)
+best_model.load_weights(filepath + filename)
 
+#Plot embedding
+visualization.embedding_tsne(flatten,batch_y)
+#Visualize a layer
+maping = visualization.map_layer(best_model,input_shape = (28,28,1))
 conv_2 = maping.get_extractor('conv_2')
 maping.plot_layer(conv_2,batch_x)
-layers = np.array([layer.name for layer in cnn.layers])
 
-flatten = maping.get_extractor('flatten')
-maping.embedding_tsne(flatten,batch_x,batch_y)
+
+
 
 
 #################################################################################################

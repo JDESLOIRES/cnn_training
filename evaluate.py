@@ -53,9 +53,9 @@ batch_x_test, batch_y_test = np.vstack(batch_x_test), np.vstack(batch_y_test)
 
 #Evaluate
 best_model = model.MyCNN()
+best_model.load_weights(filepath + filename)
 _, flatten = best_model.call(batch_x_test,training = False)
 
-best_model.load_weights(filepath + filename)
 
 ##Evaluate
 metrics = training.evaluate_model(batch_x_test, batch_y_test)

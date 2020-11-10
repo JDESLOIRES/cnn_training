@@ -17,9 +17,8 @@ class train_classifier:
         self.val_size = val_size
         self.n_batch = n_batch
 
-        x_train, y_train = shuffle(x_train, y_train)
-        self.train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train))
-        self.train_ds = self.train_ds.batch(64)
+        self.x_train = x_train
+        self.y_train = y_train
 
         self.val_ds = tf.data.Dataset.from_tensor_slices((x_valid, y_valid))
         self.val_ds = self.val_ds.batch(self.n_batch)
@@ -44,10 +43,13 @@ class train_classifier:
         iterations = 0
         cumulPrd = np.array([])
         cumulY = np.array([])
+        #faire à chaque epoch le shuffle du jeu de donnée entier
+        x_train, y_train = shuffle(self.x_train, self.y_train)
+        train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+        train_ds = train_ds.batch(64)
 
-        for step, (x_batch_train, y_batch_train) in enumerate(self.train_ds):
-
-            x_batch_train,  y_batch_train = shuffle(x_batch_train.numpy(),  y_batch_train.numpy())
+        for step, (x_batch_train, y_batch_train) in enumerate(train_ds):
+            x_batch_train, y_batch_train = shuffle(x_batch_train.numpy(), y_batch_train.numpy())
             with tf.GradientTape() as tape:
                 y_pred, _ = model(x_batch_train,
                                   training=True)
@@ -121,6 +123,7 @@ class train_classifier:
         history = {}
         for e in range(nb_epoch):
             count += 1
+
             model, train_loss, val_loss, train_metric, val_metric = self.train_classifier(model, optimizer, loss)
             train_loss_list.append(train_loss)
             val_loss_list.append(val_loss)

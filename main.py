@@ -89,8 +89,9 @@ batch_x, batch_y = training.get_batch(1, x_train), training.get_batch(1, y_train
 
 #Take the best model
 best_model = model.MyCNN()
-_, flatten = best_model.call(batch_x,training = False)
 best_model.load_weights(filepath + filename)
+_, flatten = best_model.call(batch_x,training = False)
+
 
 #Plot embedding
 visualization.embedding_tsne(flatten,batch_y)

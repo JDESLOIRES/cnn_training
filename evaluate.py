@@ -56,11 +56,10 @@ batch_x_test, batch_y_test = np.vstack(batch_x_test), np.vstack(batch_y_test)
 best_model = model.MyCNN()
 input = tf.keras.Input(shape=(28,28,1))
 best_model.call(input)
-best_model.load_weights(filepath + filename)
-_, flatten = best_model.call(batch_x_test,training = False)
-
 
 ##Evaluate
+best_model.load_weights(filepath + filename)
+_, flatten = best_model.call(batch_x_test,training = False)
 metrics = training.evaluate_model(batch_x_test, batch_y_test)
 y_pred, test_fm, *_ = metrics.apply_predictions(best_model)
 print('Accuracy on those batch test :' + str(test_fm))
@@ -69,8 +68,3 @@ print('Accuracy on those batch test :' + str(test_fm))
 visualization.embedding_tsne(flatten,batch_y_test)
 
 
-
-#Mapping predictions
-maping = visualization.map_layer(best_model, input_shape=(28, 28, 1))
-conv_2 = maping.get_extractor('conv_2')
-maping.plot_layer(conv_2, batch_x_test)

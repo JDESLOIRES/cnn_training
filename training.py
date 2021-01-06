@@ -131,7 +131,7 @@ class train_classifier:
             val_metric_list.append(val_metric)
 
             print(
-                "Epoch {0}: Training loss {1}& Validation loss {3}& Accuracy training {3}& Accuracy validation {3}".format(
+                "Epoch {0}: Training loss {1}& Validation loss {2}& Accuracy training {3}& Accuracy validation {4}".format(
                     str(e),
                     str(round(train_loss.numpy(),3)),
                     str(round(val_loss.numpy(),3)),
